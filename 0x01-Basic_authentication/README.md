@@ -462,6 +462,65 @@ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
 <!---->
 
 
+<!---->
+## [7. Basic - Base64 part](api/v1/app.py)
+### :page_with_curl: Task requirements.
+Add the method def extract_base64_authorization_header(self, authorization_header: str) -> str: in the class BasicAuth that returns the Base64 part of the Authorization header for a Basic Authentication:
+
+*    Return None if authorization_header is None
+*     Return None if authorization_header is not a string
+*     Return None if authorization_header doesn’t start by Basic (with a space at the end)
+*     Otherwise, return the value after Basic (after the space)
+*     You can assume authorization_header contains only one Basic
+```
+bob@dylan:~$ cat main_2.py
+#!/usr/bin/env python3
+""" Main 2
+"""
+from api.v1.auth.basic_auth import BasicAuth
+
+a = BasicAuth()
+
+print(a.extract_base64_authorization_header(None))
+print(a.extract_base64_authorization_header(89))
+print(a.extract_base64_authorization_header("Holberton School"))
+print(a.extract_base64_authorization_header("Basic Holberton"))
+print(a.extract_base64_authorization_header("Basic SG9sYmVydG9u"))
+print(a.extract_base64_authorization_header("Basic SG9sYmVydG9uIFNjaG9vbA=="))
+print(a.extract_base64_authorization_header("Basic1234"))
+
+bob@dylan:~$
+bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_2.py
+None
+None
+None
+Holberton
+SG9sYmVydG9u
+SG9sYmVydG9uIFNjaG9vbA==
+None
+bob@dylan:~$
+```
+
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_2.py
+chmod +x main_2.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+API_HOST=0.0.0.0 API_PORT=5000 ./main_2.py
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: api/v1/app.py](api/v1/app.py), [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
+
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
 
