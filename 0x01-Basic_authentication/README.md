@@ -1,7 +1,10 @@
 # :book: 0x01. Basic authentication.
 ## :page_with_curl: Topics Covered.
-1. REST API Authentication Mechanisms.
-
+The project involves learning about the authentication process and implementing a Basic Authentication on a simple API written in Python Flask Framework requiring knowledge in;
+* REST API Authentication Mechanisms
+* HTTP header Authorization
+* Flask, and 
+* Base64 concepts.
 
 # :computer: Tasks.
 ## [0. Simple-basic-API]()
