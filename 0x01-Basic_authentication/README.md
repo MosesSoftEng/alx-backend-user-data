@@ -60,9 +60,6 @@ cd SimpleAPI
 pip3 install -r requirements.txt
 
 API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
-
-
-
 ```
 
 ### :heavy_check_mark: Solution
