@@ -633,6 +633,86 @@ API_HOST=0.0.0.0 API_PORT=5000 ./main_4.py
 <!---->
 
 
+<!---->
+## [10. Basic - User object](api/v1/auth/basic_auth.py)
+### :page_with_curl: Task requirements.
+<span id="user_id" data-id="20738"></span>
+
+Add the method `def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'):` in the class `BasicAuth` that returns the `User` instance based on his email and password.
+
+*   Return `None` if `user_email` is `None` or not a string
+*   Return `None` if `user_pwd` is `None` or not a string
+*   Return `None` if your database (file) doesn’t contain any `User` instance with email equal to `user_email` - you should use the class method `search` of the `User` to lookup the list of users based on their email. Don’t forget to test all cases: “what if there is no user in DB?”, etc.
+*   Return `None` if `user_pwd` is not the password of the `User` instance found - you must use the method `is_valid_password` of `User`
+*   Otherwise, return the `User` instance
+```
+    bob@dylan:~$ cat main_5.py
+    #!/usr/bin/env python3
+    """ Main 5
+    """
+    import uuid
+    from api.v1.auth.basic_auth import BasicAuth
+    from models.user import User
+
+    """ Create a user test """
+    user_email = str(uuid.uuid4())
+    user_clear_pwd = str(uuid.uuid4())
+    user = User()
+    user.email = user_email
+    user.first_name = "Bob"
+    user.last_name = "Dylan"
+    user.password = user_clear_pwd
+    print("New user: {}".format(user.display_name()))
+    user.save()
+
+    """ Retreive this user via the class BasicAuth """
+
+    a = BasicAuth()
+
+    u = a.user_object_from_credentials(None, None)
+    print(u.display_name() if u is not None else "None")
+
+    u = a.user_object_from_credentials(89, 98)
+    print(u.display_name() if u is not None else "None")
+
+    u = a.user_object_from_credentials("email@notfound.com", "pwd")
+    print(u.display_name() if u is not None else "None")
+
+    u = a.user_object_from_credentials(user_email, "pwd")
+    print(u.display_name() if u is not None else "None")
+
+    u = a.user_object_from_credentials(user_email, user_clear_pwd)
+    print(u.display_name() if u is not None else "None")
+
+    bob@dylan:~$
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_5.py 
+    New user: Bob Dylan
+    None
+    None
+    None
+    None
+    Bob Dylan
+    bob@dylan:~$
+```
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_5.py
+chmod +x main_5.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+ API_HOST=0.0.0.0 API_PORT=5000 ./main_5.py 
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: api/v1/app.py](api/v1/app.py), [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
 
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
