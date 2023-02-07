@@ -714,6 +714,117 @@ pycodestyle api/v1/auth/basic_auth.py
 <!---->
 
 
+<!---->
+## [11. Basic - Overload current_user - and BOOM!](api/v1/auth/basic_auth.py)
+### :page_with_curl: Task requirements.
+Now, you have all pieces for having a complete Basic authentication.
+
+Add the method `def current_user(self, request=None) -> TypeVar('User')` in the class `BasicAuth` that overloads `Auth` and retrieves the `User` instance for a request:
+
+*   You must use `authorization_header`
+*   You must use `extract_base64_authorization_header`
+*   You must use `decode_base64_authorization_header`
+*   You must use `extract_user_credentials`
+*   You must use `user_object_from_credentials`
+
+With this update, now your API is fully protected by a Basic Authentication. Enjoy!
+
+In the first terminal:
+```
+    bob@dylan:~$ cat main_6.py
+    #!/usr/bin/env python3
+    """ Main 6
+    """
+    import base64
+    from api.v1.auth.basic_auth import BasicAuth
+    from models.user import User
+
+    """ Create a user test """
+    user_email = "bob@hbtn.io"
+    user_clear_pwd = "H0lbertonSchool98!"
+    user = User()
+    user.email = user_email
+    user.password = user_clear_pwd
+    print("New user: {} / {}".format(user.id, user.display_name()))
+    user.save()
+
+    basic_clear = "{}:{}".format(user_email, user_clear_pwd)
+    print("Basic Base64: {}".format(base64.b64encode(basic_clear.encode('utf-8')).decode("utf-8")))
+
+    bob@dylan:~$
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_6.py 
+    New user: 9375973a-68c7-46aa-b135-29f79e837495 / bob@hbtn.io
+    Basic Base64: Ym9iQGhidG4uaW86SDBsYmVydG9uU2Nob29sOTgh
+    bob@dylan:~$
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+    ....
+
+In a second terminal:
+
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
+    {
+      "status": "OK"
+    }
+    bob@dylan:~$ 
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users"
+    {
+      "error": "Unauthorized"
+    }
+    bob@dylan:~$ 
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+    {
+      "error": "Forbidden"
+    }
+    bob@dylan:~$ 
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic test"
+    {
+      "error": "Forbidden"
+    }
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iQGhidG4uaW86SDBsYmVydG9uU2Nob29sOTgh"
+    [
+      {
+        "created_at": "2017-09-25 01:55:17", 
+        "email": "bob@hbtn.io", 
+        "first_name": null, 
+        "id": "9375973a-68c7-46aa-b135-29f79e837495", 
+        "last_name": null, 
+        "updated_at": "2017-09-25 01:55:17"
+      }
+    ]
+    bob@dylan:~$
+```
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_6.py
+chmod +x main_6.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+API_HOST=0.0.0.0 API_PORT=5000 ./main_6.py
+
+# Run server
+API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+
+# Tests
+curl "http://0.0.0.0:5000/api/v1/status"
+curl "http://0.0.0.0:5000/api/v1/users"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic test"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iQGhidG4uaW86SDBsYmVydG9uU2Nob29sOTgh"
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
+
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
 
