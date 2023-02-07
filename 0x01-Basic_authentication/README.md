@@ -825,6 +825,117 @@ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iQGhidG4uaW8
 <!---->
 
 
+<!---->
+## [12. Basic - Allow password with ":"](api/v1/auth/basic_auth.py)
+### :page_with_curl: Task requirements.
+Improve the method `def extract_user_credentials(self, decoded_base64_authorization_header)` to allow password with `:`.
+
+In the first terminal:
+```
+    bob@dylan:~$ cat main_100.py
+    #!/usr/bin/env python3
+    """ Main 100
+    """
+    import base64
+    from api.v1.auth.basic_auth import BasicAuth
+    from models.user import User
+    
+    """ Create a user test """
+    user_email = "bob100@hbtn.io"
+    user_clear_pwd = "H0lberton:School:98!"
+    
+    user = User()
+    user.email = user_email
+    user.password = user_clear_pwd
+    print("New user: {}".format(user.id))
+    user.save()
+    
+    basic_clear = "{}:{}".format(user_email, user_clear_pwd)
+    print("Basic Base64: {}".format(base64.b64encode(basic_clear.encode('utf-8')).decode("utf-8")))
+    
+    bob@dylan:~$ 
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_100.py 
+    New user: 5891469b-d2d5-4d33-b05d-02617d665368
+    Basic Base64: Ym9iMTAwQGhidG4uaW86SDBsYmVydG9uOlNjaG9vbDo5OCE=
+    bob@dylan:~$
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+    ....
+```
+
+In a second terminal:
+```
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
+    {
+      "status": "OK"
+    }
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users"
+    {
+      "error": "Unauthorized"
+    }
+    bob@dylan:~$ 
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+    {
+      "error": "Forbidden"
+    }
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic test"
+    {
+      "error": "Forbidden"
+    }
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iMTAwQGhidG4uaW86SDBsYmVydG9uOlNjaG9vbDo5OCE="
+    [
+      {
+        "created_at": "2017-09-25 01:55:17", 
+        "email": "bob@hbtn.io", 
+        "first_name": null, 
+        "id": "9375973a-68c7-46aa-b135-29f79e837495", 
+        "last_name": null, 
+        "updated_at": "2017-09-25 01:55:17"
+      },
+      {
+        "created_at": "2017-09-25 01:59:42", 
+        "email": "bob100@hbtn.io", 
+        "first_name": null, 
+        "id": "5891469b-d2d5-4d33-b05d-02617d665368", 
+        "last_name": null, 
+        "updated_at": "2017-09-25 01:59:42"
+      }
+    ]
+    bob@dylan:~$
+```
+  
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_100.py
+chmod +x main_100.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+API_HOST=0.0.0.0 API_PORT=5000 ./main_100.py
+
+# Run server
+API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+
+# Tests
+curl "http://0.0.0.0:5000/api/v1/status"
+curl "http://0.0.0.0:5000/api/v1/users"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic test"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iMTAwQGhidG4uaW86SDBsYmVydG9uOlNjaG9vbDo5OCE="
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
 
