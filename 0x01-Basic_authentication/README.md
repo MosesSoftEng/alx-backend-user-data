@@ -521,6 +521,62 @@ API_HOST=0.0.0.0 API_PORT=5000 ./main_2.py
 <!---->
 
 
+<!---->
+## [8. Basic - Base64 decode](api/v1/auth/basic_auth.py)
+### :page_with_curl: Task requirements.
+Add the method def decode_base64_authorization_header(self, base64_authorization_header: str) -> str: in the class BasicAuth that returns the decoded value of a Base64 string base64_authorization_header:
+
+*    Return None if base64_authorization_header is None
+*    Return None if base64_authorization_header is not a string
+*    Return None if base64_authorization_header is not a valid Base64 - you can use try/except
+*    Otherwise, return the decoded value as UTF8 string - you can use decode('utf-8')
+```
+bob@dylan:~$ cat main_3.py
+#!/usr/bin/env python3
+""" Main 3
+"""
+from api.v1.auth.basic_auth import BasicAuth
+
+a = BasicAuth()
+
+print(a.decode_base64_authorization_header(None))
+print(a.decode_base64_authorization_header(89))
+print(a.decode_base64_authorization_header("Holberton School"))
+print(a.decode_base64_authorization_header("SG9sYmVydG9u"))
+print(a.decode_base64_authorization_header("SG9sYmVydG9uIFNjaG9vbA=="))
+print(a.decode_base64_authorization_header(a.extract_base64_authorization_header("Basic SG9sYmVydG9uIFNjaG9vbA==")))
+
+bob@dylan:~$
+bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_3.py
+None
+None
+None
+Holberton
+Holberton School
+Holberton School
+bob@dylan:~$
+```
+
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_3.py
+chmod +x main_3.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+API_HOST=0.0.0.0 API_PORT=5000 ./main_2.py
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: api/v1/app.py](api/v1/app.py), [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
+
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
 
