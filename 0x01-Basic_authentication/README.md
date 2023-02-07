@@ -339,7 +339,7 @@ Now the biggest piece is the filtering of each request. For that you will use th
     *    if auth.current_user(request) returns None, raise the error 403 - you must use abort
 
 In the first terminal:
-```
+```bash
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=auth python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
@@ -376,19 +376,90 @@ mkdir -p api/v1/auth
 touch api/v1/auth/__init__.py
 touch api/v1/auth/auth.py
 
-# Tests
-touch main_1.py
-chmod +x main_1.py
-
 pycodestyle api/v1/auth/auth.py
 pycodestyle api/v1/app.py
 
 # Start server.
-API_HOST=0.0.0.0 API_PORT=5000 ./main_0.py
+API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+
+# Tests
+curl "http://0.0.0.0:5000/api/v1/status"
+curl "http://0.0.0.0:5000/api/v1/status/"
+curl "http://0.0.0.0:5000/api/v1/users"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+
 ```
 
 ### :heavy_check_mark: Solution
 > [:point_right: api/v1/app.py](api/v1/app.py), [:point_right: api/v1/auth/auth.py](api/v1/auth/auth.py)
+
+
+<!---->
+## [6. Basic auth](api/v1/app.py)
+### :page_with_curl: Task requirements.
+Create a class BasicAuth that inherits from Auth. For the moment this class will be empty.
+
+Update api/v1/app.py for using BasicAuth class instead of Auth depending of the value of the environment variable AUTH_TYPE, If AUTH_TYPE is equal to basic_auth:
+
+*    import BasicAuth from api.v1.auth.basic_auth
+*    create an instance of BasicAuth and assign it to the variable auth
+
+Otherwise, keep the previous mechanism with auth an instance of Auth.
+
+In the first terminal:
+```
+bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+....
+```
+
+In a second terminal:
+```
+bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
+{
+  "status": "OK"
+}
+bob@dylan:~$
+bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status/"
+{
+  "status": "OK"
+}
+bob@dylan:~$
+bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users"
+{
+  "error": "Unauthorized"
+}
+bob@dylan:~$
+bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+{
+  "error": "Forbidden"
+}
+bob@dylan:~$
+```
+
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch api/v1/auth/basic_auth.py
+
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Start server.
+API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
+
+# Tests
+curl "http://0.0.0.0:5000/api/v1/status"
+curl "http://0.0.0.0:5000/api/v1/status/"
+curl "http://0.0.0.0:5000/api/v1/users"
+curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
+
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: api/v1/app.py](api/v1/app.py), [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
 
 
 # :man: Author and Credits.
