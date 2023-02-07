@@ -936,6 +936,44 @@ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym9iMTAwQGhidG4
 > [:point_right: [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
 <!---->
 
+
+<!---->
+## [13. Require auth with stars](api/v1/auth/basic_auth.py)
+### :page_with_curl: Task requirements.
+Improve `def require_auth(self, path, excluded_paths)` by allowing `*` at the end of excluded paths.
+
+Example for `excluded_paths = ["/api/v1/stat*"]`:
+
+* `/api/v1/users` will return `True`
+* `/api/v1/status` will return `False`
+* `/api/v1/stats` will return `False`
+
+  
+### :wrench: Task setup.
+```bash
+# Directory and files setup.
+touch main_101.py
+chmod +x main_101.py
+
+# Lint
+pycodestyle api/v1/auth/auth.py
+pycodestyle api/v1/app.py
+pycodestyle api/v1/auth/basic_auth.py
+
+# Tests
+API_HOST=0.0.0.0 API_PORT=5000 ./main_101.py
+
+# Tests
+curl "http://0.0.0.0:5000/api/v1/users"
+curl "http://0.0.0.0:5000/api/v1/status"
+curl "http://0.0.0.0:5000/api/v1/stats"
+
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: [:point_right: api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py)
+<!---->
+
 # :man: Author and Credits.
 This project was done by [SE. Moses Mwangi](https://github.com/MosesSoftEng). Feel free to get intouch with me;
 
