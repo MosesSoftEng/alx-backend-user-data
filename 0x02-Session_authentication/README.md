@@ -324,3 +324,65 @@ Now you have 2 methods (`create_session` and `user_id_for_session_id`) for stori
 ### :heavy_check_mark: Solution
 > [:point_right: api/v1/auth/session_auth.py](api/v1/auth/session_auth.py
 
+
+## [4. Session cookie](api/v1/auth/auth.py)
+### :page_with_curl: Task requirements.
+Score: 0.0% (Checks completed: 0.0%)
+
+Update `api/v1/auth/auth.py` by adding the method `def session_cookie(self, request=None):` that returns a cookie value from a request:
+
+* Return `None` if `request` is `None`
+* Return the value of the cookie named `_my_session_id` from `request` \- the name of the cookie must be defined by the environment variable `SESSION_NAME`
+* You must use `.get()` built-in for accessing the cookie in the request cookies dictionary
+* You must use the environment variable `SESSION_NAME` to define the name of the cookie used for the Session ID
+
+In the first terminal:
+```
+    bob@dylan:~$ cat main_3.py
+    #!/usr/bin/env python3
+    """ Cookie server
+    """
+    from flask import Flask, request
+    from api.v1.auth.auth import Auth
+    
+    auth = Auth()
+    
+    app = Flask(__name__)
+    
+    @app.route('/', methods=['GET'], strict_slashes=False)
+    def root_path():
+        """ Root path
+        """
+        return "Cookie value: {}\n".format(auth.session_cookie(request))
+    
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port="5000")
+    
+    bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=session_auth SESSION_NAME=_my_session_id ./main_3.py 
+     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+    ....
+```
+
+In a second terminal:
+```
+    bob@dylan:~$ curl "http://0.0.0.0:5000"
+    Cookie value: None
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000" --cookie "_my_session_id=Hello"
+    Cookie value: Hello
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000" --cookie "_my_session_id=C is fun"
+    Cookie value: C is fun
+    bob@dylan:~$
+    bob@dylan:~$ curl "http://0.0.0.0:5000" --cookie "_my_session_id_fake"
+    Cookie value: None
+    bob@dylan:~$
+```
+
+### :wrench: Task setup.
+```bash
+```
+
+### :heavy_check_mark: Solution
+> [:point_right: api/v1/auth/auth.py](api/v1/auth/auth.py)
+
